@@ -8,7 +8,7 @@ public class YutFirstSideCell : YutBasedCell
     [SerializeField] YutBasedCell wareCell; //넘어가기
     [SerializeField] YutBasedCell arriveCell; //도착
 
-    public override void MoveToward(PlayerPiece player)
+    public override void MoveToward(PlayerPiece player, float animationTime)
     {
         if (player.playerType == 0)
         {
@@ -16,7 +16,7 @@ public class YutFirstSideCell : YutBasedCell
             {
                 player.previousCells.Add(arriveCell);
                 player.currentCell = arriveCell;
-                player.transform.DOMove(arriveCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                player.transform.DOMove(arriveCell.transform.position, animationTime).SetEase(Ease.OutQuad);
                 if (player.moveCount <= 0)
                     arriveCell.playerOneArrived = true;
             }
@@ -24,7 +24,7 @@ public class YutFirstSideCell : YutBasedCell
             {
                 player.previousCells.Add(wareCell);
                 player.currentCell = wareCell;
-                player.transform.DOMove(wareCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                player.transform.DOMove(wareCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                 if (player.moveCount <= 0)
                     wareCell.playerOneArrived = true;
@@ -37,7 +37,7 @@ public class YutFirstSideCell : YutBasedCell
             {
                 player.previousCells.Add(arriveCell);
                 player.currentCell = arriveCell;
-                player.transform.DOMove(arriveCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                player.transform.DOMove(arriveCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                 if (player.moveCount <= 0)
                     arriveCell.playerOneArrived = true;
@@ -46,7 +46,7 @@ public class YutFirstSideCell : YutBasedCell
             {
                 player.previousCells.Add(wareCell);
                 player.currentCell = wareCell;
-                player.transform.DOMove(wareCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                player.transform.DOMove(wareCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                 if (player.moveCount <= 0)
                     wareCell.playerOneArrived = true;
