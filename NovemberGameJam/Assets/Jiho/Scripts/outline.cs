@@ -29,15 +29,19 @@ public class outline : MonoBehaviour
         {
             Time.timeScale = 0;
             lefttext.text = "LOSE";
+            lefttext.color = Color.red;
             righttext.text = "WIN";
-            leftimage.color = new Color(0, 0, 0, 50);
+            righttext.color = Color.green;
+            leftimage.color = new Color(0, 0, 0, 0.5f);
         }
         if(collision.name == "rightjegi")
         {
             Time.timeScale = 0;
             lefttext.text = "WIN";
+            lefttext.color = Color.green;
             righttext.text = "LOSE";
-            rightimage.color = new Color(0, 0, 0, 50);
+            righttext.color = Color.red;
+            rightimage.color = new Color(0, 0, 0, 0.5f);
         }
     }
 }
