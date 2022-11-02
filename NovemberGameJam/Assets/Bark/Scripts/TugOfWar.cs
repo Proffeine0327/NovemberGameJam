@@ -1,23 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using UnityEngine.SceneManagement;
+using DG.Tweening;
+using System.Reflection;
 
 public class TugOfWar : MonoBehaviour
 {
-    [SerializeField] GameObject Line, TouchParticle, Tutorial, GameOverParticle;
+    [SerializeField] GameObject Line, TouchParticle, Tutorial, GameOverParticle, ResultWindow;
+    [SerializeField] SpriteRenderer[] Player1Arrows, Player2Arrows;
     [SerializeField] Transform LeftPos, RightPos;
     [SerializeField] List<KeyCode> KeyboardList = new List<KeyCode>();
     [SerializeField] List<KeyCode> KeyboardList2 = new List<KeyCode>();
     [SerializeField] List<KeyCode> RandomKeyboardList = new List<KeyCode>();
     [SerializeField] List<KeyCode> RandomKeyboardList2 = new List<KeyCode>();
-    [SerializeField] Text StartSecond;
+    [SerializeField] Text StartSecond, Result1, Result2;
     [SerializeField] Text[] Player1Text, Player2Text;
     private int TouchNum;
     private bool isGameStart = false, isGameOver1 = false, isGameOver2 = false;
 
+    private Coroutine IngCoroutine;
     private void Start()
     {
         StartListDraw();
@@ -41,6 +45,11 @@ public class TugOfWar : MonoBehaviour
                 {
                     if (KeyboardList[i] == RandomKeyboardList[0])
                     {
+                        if (IngCoroutine != null)
+                        {
+                            StopCoroutine(IngCoroutine);
+                        }
+                        IngCoroutine = StartCoroutine(Grading(true, Player1Arrows));
                         TouchProduction(LeftPos);
                         TouchNum--;
                         RandomKeyboardList.Remove(RandomKeyboardList[0]);
@@ -48,6 +57,11 @@ public class TugOfWar : MonoBehaviour
                     }
                     else
                     {
+                        if (IngCoroutine != null)
+                        {
+                            StopCoroutine(IngCoroutine);
+                        }
+                        IngCoroutine = StartCoroutine(Grading(false, Player1Arrows));
                         StartCoroutine(GameOverDelay(true));
                         //기절
                     }
@@ -59,6 +73,11 @@ public class TugOfWar : MonoBehaviour
                 {
                     if (KeyboardList2[i] == RandomKeyboardList2[0])
                     {
+                        if (IngCoroutine != null)
+                        {
+                            StopCoroutine(IngCoroutine);
+                        }
+                        IngCoroutine = StartCoroutine(Grading(true, Player2Arrows));
                         TouchProduction(RightPos);
                         TouchNum++;
                         RandomKeyboardList2.Remove(RandomKeyboardList2[0]);
@@ -66,6 +85,11 @@ public class TugOfWar : MonoBehaviour
                     }
                     else
                     {
+                        if (IngCoroutine != null)
+                        {
+                            StopCoroutine(IngCoroutine);
+                        }
+                        IngCoroutine = StartCoroutine(Grading(false, Player2Arrows));
                         StartCoroutine(GameOverDelay(false));
                         //기절
                     }
@@ -92,10 +116,18 @@ public class TugOfWar : MonoBehaviour
         if (TouchNum >= 15)
         {
             isGameStart = false;
+            ResultWindow.SetActive(true);
+            ResultWindow.gameObject.transform.DOScale(new Vector3(1, 1, 1), 0.7f);
+            Result1.text = "Player2";
+            Result2.text = "Player1";
         }
         else if (TouchNum <= -15)
         {
             isGameStart = false;
+            ResultWindow.SetActive(true);
+            ResultWindow.gameObject.transform.DOScale(new Vector3(1, 1, 1), 0.7f);
+            Result1.text = "Player1";
+            Result2.text = "Player2";
         }
     }
     void PressKeyPrint()
@@ -123,12 +155,11 @@ public class TugOfWar : MonoBehaviour
     }
     IEnumerator StartTutorial()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
+            StartSecond.text = $"{5 - i}";
             yield return new WaitForSeconds(1);
-            StartSecond.text = $"{3 - i}";
         }
-        yield return new WaitForSeconds(1);
         Tutorial.SetActive(false);
         StartSecond.gameObject.SetActive(false);
         isGameStart = true;
@@ -148,9 +179,45 @@ public class TugOfWar : MonoBehaviour
             isGameOver2 = true;
             GameObject gameObject = Instantiate(GameOverParticle, RightPos);
             yield return new WaitForSeconds(2);
-            Destroy (gameObject);
+            Destroy(gameObject);
             isGameOver2 = false;
         }
+    }
+    IEnumerator Grading(bool grad, SpriteRenderer[] spriteRenderers)
+    {
+        if (grad)
+        {
+            for (int i = 0; i < Player1Arrows.Length; i++)
+            {
+                spriteRenderers[i].color = new Color(0, 1, 0, 1);
+            }
+            yield return new WaitForSeconds(0.6f);
+            for (int i = 0; i < Player1Arrows.Length; i++)
+            {
+                spriteRenderers[i].color = new Color(1, 1, 0, 1);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Player1Arrows.Length; i++)
+            {
+                spriteRenderers[i].color = new Color(1, 0, 0, 1);
+            }
+            yield return new WaitForSeconds(2);
+            for (int i = 0; i < Player1Arrows.Length; i++)
+            {
+                spriteRenderers[i].color = new Color(1, 1, 0, 1);
+            }
+            IngCoroutine = null;
+        }
+    }
+    public void GoHome()
+    {
+        //SceneManager.LoadScene("Title");
+    }
+    public void ReTry()
+    {
+        SceneManager.LoadScene("TugOfWar");
     }
 }
 

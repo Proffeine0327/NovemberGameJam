@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/rladndtjq/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Bark/Scenes/TugOfWar.unity
+    guid: ca718f308cfd8094987531d0d3bb617a
   m_configObjects: {}
