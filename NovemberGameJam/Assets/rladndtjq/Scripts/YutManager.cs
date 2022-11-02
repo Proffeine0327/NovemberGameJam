@@ -27,11 +27,11 @@ public class YutManager : MonoBehaviour
 
     }
 
-    public ThrowResult ThrowYutsNGetResult()
+    public ThrowResult ThrowYutsNGetResult(float power)
     {
-        foreach (var yut in yuts)
+        for(int i = 0; i < yuts.Count; i++)
         {
-            yut.MoveRandomPos(transform.position, yutClampRange, yutInsideRange, 0.8f);
+            yuts[i].MoveRandomPos(i,power,transform.position, yutClampRange, yutInsideRange, 0.8f);
         }
 
         bool isBackDo = true;

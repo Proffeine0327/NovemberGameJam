@@ -8,11 +8,11 @@ public abstract class YutBasedCell : MonoBehaviour
     public bool playerOneArrived;
     public bool playerTwoArrived;
 
-    public abstract void MoveToward(PlayerPiece player);
-    public void MoveBackward(PlayerPiece player)
+    public abstract void MoveToward(PlayerPiece player, float animationTime);
+    public void MoveBackward(PlayerPiece player, float animationTime)
     {
         player.currentCell = player.previousCells[player.previousCells.Count - 1];
-        player.transform.DOMove(player.previousCells[player.previousCells.Count - 1].transform.position, 0.35f).SetEase(Ease.OutCubic);
+        player.transform.DOMove(player.previousCells[player.previousCells.Count - 1].transform.position, animationTime).SetEase(Ease.OutCubic);
         player.previousCells.RemoveAt(player.previousCells.Count - 1);
     }
 }

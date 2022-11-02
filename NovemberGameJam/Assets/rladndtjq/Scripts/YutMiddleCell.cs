@@ -11,7 +11,7 @@ public class YutMiddleCell : YutBasedCell
     [SerializeField] YutBasedCell fromFirstCell;
     [SerializeField] YutBasedCell fromSecondCell;
 
-    public override void MoveToward(PlayerPiece player)
+    public override void MoveToward(PlayerPiece player, float animationTime)
     {
         if (player.playerType == 0)
         {
@@ -19,7 +19,7 @@ public class YutMiddleCell : YutBasedCell
             {
                 player.previousCells.Add(player.currentCell);
                 player.currentCell = toFinalCell;
-                player.transform.DOMove(toFinalCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                player.transform.DOMove(toFinalCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                 if (player.moveCount <= 0)
                     toFinalCell.playerOneArrived = true;
@@ -32,7 +32,7 @@ public class YutMiddleCell : YutBasedCell
                 {
                     player.previousCells.Add(player.currentCell);
                     player.currentCell = toThirdCell;
-                    player.transform.DOMove(toThirdCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                    player.transform.DOMove(toThirdCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                     if (player.moveCount <= 0)
                         toThirdCell.playerOneArrived = true;
@@ -43,7 +43,7 @@ public class YutMiddleCell : YutBasedCell
                 {
                     player.previousCells.Add(player.currentCell);
                     player.currentCell = toFinalCell;
-                    player.transform.DOMove(toFinalCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                    player.transform.DOMove(toFinalCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
 
                     if (player.moveCount <= 0)
@@ -58,7 +58,7 @@ public class YutMiddleCell : YutBasedCell
             if (playerTwoArrived == true)
             {
                 player.currentCell = toFinalCell;
-                player.transform.DOMove(toFinalCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                player.transform.DOMove(toFinalCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                 if (player.moveCount <= 0)
                     toFinalCell.playerTwoArrived = true;
@@ -70,7 +70,7 @@ public class YutMiddleCell : YutBasedCell
                 if (player.previousCells[player.previousCells.Count - 1] == fromFirstCell)
                 {
                     player.currentCell = toThirdCell;
-                    player.transform.DOMove(toThirdCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                    player.transform.DOMove(toThirdCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                     if (player.moveCount <= 0)
                         toFinalCell.playerTwoArrived = true;
@@ -80,7 +80,7 @@ public class YutMiddleCell : YutBasedCell
                 if (player.previousCells[player.previousCells.Count - 1] == fromSecondCell)
                 {
                     player.currentCell = toFinalCell;
-                    player.transform.DOMove(toFinalCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+                    player.transform.DOMove(toFinalCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
                     if (player.moveCount <= 0)
                         toFinalCell.playerTwoArrived = true;

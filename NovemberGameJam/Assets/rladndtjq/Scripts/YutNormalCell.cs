@@ -7,7 +7,7 @@ public class YutNormalCell : YutBasedCell
 {
     [SerializeField] YutBasedCell nextCell;
 
-    public override void MoveToward(PlayerPiece player)
+    public override void MoveToward(PlayerPiece player, float animationTime)
     {
         if (player.playerType == 0)
         {
@@ -24,7 +24,7 @@ public class YutNormalCell : YutBasedCell
 
         player.previousCells.Add(player.currentCell);
         player.currentCell = nextCell;
-        player.transform.DOMove(nextCell.transform.position, 0.35f).SetEase(Ease.OutQuad);
+        player.transform.DOMove(nextCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
     }
 }

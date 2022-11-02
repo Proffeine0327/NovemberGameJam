@@ -9,5 +9,5 @@ public class PlayerPiece : MonoBehaviour
     public List<YutBasedCell> previousCells = new List<YutBasedCell>();
     public int playerType; //0 == playerOne, 1 == playerTwo;
     public int moveCount;
-    public bool isTurn;
+    public bool isContinuity;
 }
