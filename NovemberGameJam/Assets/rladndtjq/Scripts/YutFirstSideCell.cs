@@ -14,7 +14,7 @@ public class YutFirstSideCell : YutBasedCell
         {
             if (playerOneArrived == true)
             {
-                player.previousCells.Add(arriveCell);
+                player.previousCells.Add(player.currentCell);
                 player.currentCell = arriveCell;
                 player.transform.DOMove(arriveCell.transform.position, animationTime).SetEase(Ease.OutQuad);
                 if (player.moveCount <= 0)
@@ -22,7 +22,7 @@ public class YutFirstSideCell : YutBasedCell
             }
             else
             {
-                player.previousCells.Add(wareCell);
+                player.previousCells.Add(player.currentCell);
                 player.currentCell = wareCell;
                 player.transform.DOMove(wareCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
@@ -35,7 +35,7 @@ public class YutFirstSideCell : YutBasedCell
         {
             if (playerTwoArrived == true)
             {
-                player.previousCells.Add(arriveCell);
+                player.previousCells.Add(player.currentCell);
                 player.currentCell = arriveCell;
                 player.transform.DOMove(arriveCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
@@ -44,7 +44,7 @@ public class YutFirstSideCell : YutBasedCell
             }
             else
             {
-                player.previousCells.Add(wareCell);
+                player.previousCells.Add(player.currentCell);
                 player.currentCell = wareCell;
                 player.transform.DOMove(wareCell.transform.position, animationTime).SetEase(Ease.OutQuad);
 
