@@ -10,6 +10,8 @@ public class player : MonoBehaviour
     Sprite[] sprites;
     [SerializeField]
     float speed;
+    [SerializeField]
+    GameObject tagger;
     void Start()
     {
         
@@ -17,7 +19,7 @@ public class player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) && tagger.GetComponent<tagger>().move)
         {
             players[0].transform.position -= new Vector3(1, 0) * speed * Time.deltaTime;
             players[0].GetComponent<SpriteRenderer>().sprite = sprites[0];
@@ -26,7 +28,7 @@ public class player : MonoBehaviour
         {
             players[0].GetComponent<SpriteRenderer>().sprite = sprites[1];
         }    
-        if (Input.GetKey(KeyCode.L))
+        if (Input.GetKey(KeyCode.L) && tagger.GetComponent<tagger>().move)
         {
             players[1].transform.position -= new Vector3(1, 0) * speed * Time.deltaTime;
             players[1].GetComponent<SpriteRenderer>().sprite = sprites[2];

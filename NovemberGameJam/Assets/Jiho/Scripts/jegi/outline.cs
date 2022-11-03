@@ -17,17 +17,17 @@ public class outline : MonoBehaviour
     GameObject[] jegi;
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        
+
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.name == "leftjegi")
+        if (collision.name == "leftjegi")
         {
             jegi[0].GetComponent<Collider2D>().enabled = false;
             jegi[0].GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
@@ -38,8 +38,9 @@ public class outline : MonoBehaviour
             righttext.text = "WIN";
             righttext.color = Color.green;
             leftimage.color = new Color(0, 0, 0, 0.5f);
+            gameend();
         }
-        if(collision.name == "rightjegi")
+        if (collision.name == "rightjegi")
         {
             jegi[0].GetComponent<Collider2D>().enabled = false;
             jegi[0].GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
@@ -50,6 +51,13 @@ public class outline : MonoBehaviour
             righttext.text = "LOSE";
             righttext.color = Color.red;
             rightimage.color = new Color(0, 0, 0, 0.5f);
+            gameend();
         }
+    }
+
+    public void gameend()
+    {
+        Debug.Log("제기 끝!");
+        //게임 종료시 호출되는 함수
     }
 }

@@ -11,31 +11,58 @@ public class tagger : MonoBehaviour
     Sprite[] sprites;
     [SerializeField]
     TextMesh[] tm;
+    [SerializeField]
+    GameObject Mugunghwamanager;
+    [SerializeField]
+    GameObject image;
+    [SerializeField]
+    Text timer;
+    float time = 4f;
     string dialogue = "무궁화 꽃이 피었습니다!";
     bool isturn = false;
     bool iscou = false;
     bool istext = false;
+    bool isstart = false;
+    public bool isnotend = true;
+    public bool move = false;
     void Start()
     {
-        StartCoroutine(adf());
+        StartCoroutine(mugunghwastart());
     }
 
     void Update()
     {
-        if (istext == true)
+        if(isstart)
+        {
+            time -= Time.deltaTime;
+            timer.text = ((int)time).ToString();
+        }
+        if (istext == true && isnotend)
         {
             istext = false;
             StartCoroutine(printtext());
         }
         if (isturn == true)
         {
-            if (Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.S) && isnotend)
             {
-                Debug.Log("왼쪽 아웃");
+                isnotend = false;
+                tm[0].color = Color.red;
+                tm[0].text = "Lose!";
+                tm[1].color = Color.green;
+                tm[1].text = "Win!";
+                Mugunghwamanager.GetComponent<player>().enabled = false;
+                gameend();
             }
-            if (Input.GetKey(KeyCode.L))
+            if (Input.GetKey(KeyCode.L) && isnotend)
             {
-                Debug.Log("오른쪽 아웃");
+                isnotend = false;
+                tm[0].color = Color.green;
+                tm[0].text = "Win!";
+                tm[1].color = Color.red;
+                tm[1].text = "Lose!";
+                Mugunghwamanager.GetComponent<player>().enabled = false;
+                gameend();
             }
         }
         if (iscou == true)
@@ -63,13 +90,25 @@ public class tagger : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         text.text = "";
         isturn = false;
-        GetComponent<SpriteRenderer>().sprite = sprites[0];
+        if (isnotend)
+        {
+            GetComponent<SpriteRenderer>().sprite = sprites[0];
+        }
         istext = true;
     }
 
-    IEnumerator adf()
+    IEnumerator mugunghwastart()
     {
+        isstart = true;
         yield return new WaitForSeconds(3f);
+        move = true;
+        isstart = false;
+        image.SetActive(false);
         istext = true;
+    }
+    public void gameend()
+    {
+        Debug.Log("무궁화 끝!");
+        //게임 종료시 호출되는 함수
     }
 }
