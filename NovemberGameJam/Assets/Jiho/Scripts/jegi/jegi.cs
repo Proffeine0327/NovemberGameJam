@@ -12,12 +12,12 @@ public class jegi : MonoBehaviour
 
     void Update()
     {
-        if ((Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S))&& clickline[0].GetComponent<clickline>().isclick)
+        if (Input.GetKeyUp(KeyCode.S)&& clickline[0].GetComponent<clickline>().isclick)
         {
             clickline[0].GetComponent<clickline>().isclick = false;
             StartCoroutine(lineoff(0));
         }
-        if ((Input.GetKeyUp(KeyCode.K) || Input.GetKeyUp(KeyCode.L)) && clickline[1].GetComponent<clickline>().isclick)
+        if (Input.GetKeyUp(KeyCode.L) && clickline[1].GetComponent<clickline>().isclick)
         {
             clickline[1].GetComponent<clickline>().isclick = false;
             StartCoroutine(lineoff(1));

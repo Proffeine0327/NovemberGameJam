@@ -13,6 +13,8 @@ public class outline : MonoBehaviour
     Image leftimage;
     [SerializeField]
     Image rightimage;
+    [SerializeField]
+    GameObject[] jegi;
     void Start()
     {
         
@@ -27,7 +29,10 @@ public class outline : MonoBehaviour
     {
         if(collision.name == "leftjegi")
         {
-            Time.timeScale = 0;
+            jegi[0].GetComponent<Collider2D>().enabled = false;
+            jegi[0].GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+            jegi[1].GetComponent<Collider2D>().enabled = false;
+            jegi[1].GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
             lefttext.text = "LOSE";
             lefttext.color = Color.red;
             righttext.text = "WIN";
@@ -36,7 +41,10 @@ public class outline : MonoBehaviour
         }
         if(collision.name == "rightjegi")
         {
-            Time.timeScale = 0;
+            jegi[0].GetComponent<Collider2D>().enabled = false;
+            jegi[0].GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+            jegi[1].GetComponent<Collider2D>().enabled = false;
+            jegi[1].GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
             lefttext.text = "WIN";
             lefttext.color = Color.green;
             righttext.text = "LOSE";
