@@ -1,8 +1,11 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class YutGameManager : MonoBehaviour
 {
@@ -10,43 +13,90 @@ public class YutGameManager : MonoBehaviour
 
     public YutManager yutManager;
     public PlayerPiece[] players;
-    public int currentTurnPlayer;
+    public int currentTurnPlayerIndex;
     public YutBasedCell startCell;
     public YutBasedCell lastCell;
     public bool isGettingResult;
     public float power;
+    public bool isEnd = false;
+    public bool isPlayGame = false;
+    public bool isPlayMiniGame = false;
+    public int pieceAmount;
+    public int miniGameTurnCount;
+    public GameObject disable;
+    public string[] miniGameSceneNames;
     [Header("UI")]
     public Image powerBarImage;
     public TextMeshProUGUI throwResultText;
+    public Image fadeInPanel;
+
+
+    float fadeInTime = 2;
+    int currentMiniGameTurnCount;
+    SpriteRenderer[] playerSRs;
 
     private void Awake()
     {
         manager = this;
+        DontDestroyOnLoad(manager);
+
         powerBarImage.gameObject.SetActive(false);
         throwResultText.gameObject.SetActive(false);
+        fadeInPanel.gameObject.SetActive(true);
+
+        var playersr =
+            from player in players
+            select player.GetComponent<SpriteRenderer>();
+
+        playerSRs = playersr.ToArray();
+
+        foreach (var player in players) player.mark.SetActive(false);
+
+        StartCoroutine(fadeIn());
+    }
+
+    IEnumerator fadeIn()
+    {
+        for (float t = fadeInTime; t > 0; t -= Time.deltaTime)
+        {
+            fadeInTime = t;
+            var color = fadeInPanel.color;
+            color.a = fadeInTime / 2;
+            fadeInPanel.color = color;
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return new WaitForSeconds(1);
+
+        isPlayGame = true;
     }
 
     void Update()
     {
-        if (!isGettingResult)
+        if (isPlayGame && !isEnd)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!isGettingResult)
             {
-                powerBarImage.gameObject.SetActive(true);
-            }
+                players[currentTurnPlayerIndex].mark.SetActive(true);
 
-            if (Input.GetMouseButton(0) && power < 1)
-            {
-                power += Time.deltaTime / 2;
-                powerBarImage.fillAmount = power;
-            }
+                var color = playerSRs[currentTurnPlayerIndex == 0 ? 1 : 0].color;
+                color.a = 0.6f;
+                playerSRs[currentTurnPlayerIndex == 0 ? 1 : 0].color = color;
 
-            if (Input.GetMouseButtonUp(0))
-            {
-                isGettingResult = true;
-                powerBarImage.gameObject.SetActive(false);
-                StartCoroutine(ThrowingYuts());
-                power = 0;
+                if (Input.GetMouseButton(0) && power < 1)
+                {
+                    powerBarImage.gameObject.SetActive(true);
+                    power += Time.deltaTime / 2;
+                    powerBarImage.fillAmount = power;
+                }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    isGettingResult = true;
+                    powerBarImage.gameObject.SetActive(false);
+                    StartCoroutine(ThrowingYuts());
+                    power = 0;
+                }
             }
         }
     }
@@ -61,28 +111,28 @@ public class YutGameManager : MonoBehaviour
                 throwResultText.text = "낙!";
                 break;
             case ThrowResult.BackDo:
-                if (players[currentTurnPlayer].currentCell != startCell)
+                if (players[currentTurnPlayerIndex].currentCell != startCell)
                     isBackDo = true;
                 throwResultText.text = "빽도!";
                 break;
             case ThrowResult.Do:
-                players[currentTurnPlayer].moveCount = 1;
+                players[currentTurnPlayerIndex].moveCount = 1;
                 throwResultText.text = "도!";
                 break;
             case ThrowResult.Gae:
-                players[currentTurnPlayer].moveCount = 2;
+                players[currentTurnPlayerIndex].moveCount = 2;
                 throwResultText.text = "개!";
                 break;
             case ThrowResult.Girl:
-                players[currentTurnPlayer].moveCount = 3;
+                players[currentTurnPlayerIndex].moveCount = 3;
                 throwResultText.text = "걸!";
                 break;
             case ThrowResult.Yut:
-                players[currentTurnPlayer].moveCount = 4;
+                players[currentTurnPlayerIndex].moveCount = 4;
                 throwResultText.text = "윷!";
                 break;
             case ThrowResult.Mo:
-                players[currentTurnPlayer].moveCount = 5;
+                players[currentTurnPlayerIndex].moveCount = 5;
                 throwResultText.text = "모!";
                 break;
 
@@ -95,32 +145,86 @@ public class YutGameManager : MonoBehaviour
 
         if (isBackDo)
         {
-            players[currentTurnPlayer].currentCell.MoveBackward(players[currentTurnPlayer], 0.35f);
+            players[currentTurnPlayerIndex].currentCell.MoveBackward(players[currentTurnPlayerIndex], 0.35f);
         }
         else
         {
-            while (players[currentTurnPlayer].moveCount > 0)
+            while (players[currentTurnPlayerIndex].moveCount > 0)
             {
-                players[currentTurnPlayer].moveCount--;
-                players[currentTurnPlayer].currentCell.MoveToward(players[currentTurnPlayer], 0.35f);
+                players[currentTurnPlayerIndex].moveCount--;
+                players[currentTurnPlayerIndex].currentCell.MoveToward(players[currentTurnPlayerIndex], 0.35f);
                 yield return new WaitForSeconds(0.36f);
-                if (players[currentTurnPlayer].currentCell == lastCell)
+                if (players[currentTurnPlayerIndex].currentCell == lastCell)
                     break;
             }
         }
 
-        if (!players[currentTurnPlayer].isContinuity)
+        if (players[currentTurnPlayerIndex].currentCell == lastCell)
+        {
+            if (players[currentTurnPlayerIndex].cycleCount < pieceAmount)
+            {
+                yield return new WaitForSeconds(0.3f);
+                players[currentTurnPlayerIndex].previousCells.Clear();
+                players[currentTurnPlayerIndex].currentCell = startCell;
+                players[currentTurnPlayerIndex].moveCount = 0;
+                players[currentTurnPlayerIndex].transform.DOMove(startCell.transform.position, 0.5f);
+                yield return new WaitForSeconds(0.5f);
+                players[currentTurnPlayerIndex].cycleCount++;
+            }
+            else
+            {
+                isEnd = true;
+            }
+        }
+
+        if (!players[currentTurnPlayerIndex].isContinuity)
         {
             if (throwResult != ThrowResult.Mo && throwResult != ThrowResult.Yut)
-                currentTurnPlayer = currentTurnPlayer == 0 ? 1 : 0;
+            {
+                currentTurnPlayerIndex = currentTurnPlayerIndex == 0 ? 1 : 0;
+            }
+            else
+            {
+                players[currentTurnPlayerIndex].isContinuity = true;
+            }
         }
         else
         {
-            players[currentTurnPlayer].isContinuity = true;
-            currentTurnPlayer = currentTurnPlayer == 0 ? 1 : 0;
+            players[currentTurnPlayerIndex].isContinuity = false;
+            currentTurnPlayerIndex = currentTurnPlayerIndex == 0 ? 1 : 0;
         }
         yield return new WaitForSecondsRealtime(1.4f);
+        for (int i = 0; i < players.Length; i++)
+        {
+            var color = playerSRs[i].color;
+            color.a = 1;
+            playerSRs[i].color = color;
+        }
         isGettingResult = false;
-        foreach(var yut in yutManager.yuts) yut.Reset();
+
+        if (currentMiniGameTurnCount < miniGameTurnCount)
+        {
+            currentMiniGameTurnCount++;
+        }
+        else
+        {
+            disable.SetActive(false);
+            var randSceneName = miniGameSceneNames[Random.Range(0, miniGameSceneNames.Length - 1)];
+            SceneManager.LoadSceneAsync(randSceneName, LoadSceneMode.Additive);
+
+            isPlayMiniGame = true;
+            do
+            {
+                isPlayGame = false;
+                yield return new WaitForEndOfFrame();
+            } while (isPlayMiniGame);
+            isPlayMiniGame = false;
+
+            SceneManager.UnloadSceneAsync(randSceneName);
+            disable.SetActive(true);
+        }
+
+        foreach (var yut in yutManager.yuts) yut.Reset();
+        foreach (var player in players) player.mark.SetActive(false);
     }
 }
