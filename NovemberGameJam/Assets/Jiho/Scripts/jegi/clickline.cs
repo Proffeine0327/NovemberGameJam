@@ -20,14 +20,23 @@ public class clickline : MonoBehaviour
     {
         if (collision.tag == "jegi")
         {
+            StartCoroutine(kicksprite(collision));
             collision.GetComponent<Rigidbody2D>().AddForce(transform.up * power);
-            StartCoroutine(clicktrue(collision));
+            StartCoroutine(clicktrue());
         }
     }
 
-    IEnumerator clicktrue(Collider2D col)
+    IEnumerator clicktrue()
     {
         yield return new WaitForSeconds(0.1f);
         isclick = true;
+    }
+
+    IEnumerator kicksprite(Collider2D col)
+    {
+        col.GetComponent<jegiobject>().ischange = false;
+        col.GetComponent<SpriteRenderer>().sprite = col.GetComponent<jegiobject>().sprites[0];
+        yield return new WaitForSeconds(0.05f);
+        col.GetComponent<jegiobject>().ischange = true;
     }
 }
