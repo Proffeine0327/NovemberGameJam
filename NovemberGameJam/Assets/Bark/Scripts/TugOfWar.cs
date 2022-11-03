@@ -21,7 +21,8 @@ public class TugOfWar : MonoBehaviour
     private int TouchNum;
     private bool isGameStart = false, isGameOver1 = false, isGameOver2 = false;
 
-    private Coroutine IngCoroutine;
+    private Coroutine IngCoroutine1;
+    private Coroutine IngCoroutine2;
     private void Start()
     {
         StartListDraw();
@@ -45,11 +46,11 @@ public class TugOfWar : MonoBehaviour
                 {
                     if (KeyboardList[i] == RandomKeyboardList[0])
                     {
-                        if (IngCoroutine != null)
+                        if (IngCoroutine1 != null)
                         {
-                            StopCoroutine(IngCoroutine);
+                            StopCoroutine(IngCoroutine1);
                         }
-                        IngCoroutine = StartCoroutine(Grading(true, Player1Arrows));
+                        IngCoroutine1 = StartCoroutine(Grading(true, Player1Arrows));
                         TouchProduction(LeftPos);
                         TouchNum--;
                         RandomKeyboardList.Remove(RandomKeyboardList[0]);
@@ -57,11 +58,11 @@ public class TugOfWar : MonoBehaviour
                     }
                     else
                     {
-                        if (IngCoroutine != null)
+                        if (IngCoroutine1 != null)
                         {
-                            StopCoroutine(IngCoroutine);
+                            StopCoroutine(IngCoroutine1);
                         }
-                        IngCoroutine = StartCoroutine(Grading(false, Player1Arrows));
+                        IngCoroutine1 = StartCoroutine(Grading(false, Player1Arrows));
                         StartCoroutine(GameOverDelay(true));
                         //기절
                     }
@@ -73,11 +74,11 @@ public class TugOfWar : MonoBehaviour
                 {
                     if (KeyboardList2[i] == RandomKeyboardList2[0])
                     {
-                        if (IngCoroutine != null)
+                        if (IngCoroutine2 != null)
                         {
-                            StopCoroutine(IngCoroutine);
+                            StopCoroutine(IngCoroutine2);
                         }
-                        IngCoroutine = StartCoroutine(Grading(true, Player2Arrows));
+                        IngCoroutine2 = StartCoroutine(Grading(true, Player2Arrows));
                         TouchProduction(RightPos);
                         TouchNum++;
                         RandomKeyboardList2.Remove(RandomKeyboardList2[0]);
@@ -85,11 +86,11 @@ public class TugOfWar : MonoBehaviour
                     }
                     else
                     {
-                        if (IngCoroutine != null)
+                        if (IngCoroutine2 != null)
                         {
-                            StopCoroutine(IngCoroutine);
+                            StopCoroutine(IngCoroutine2);
                         }
-                        IngCoroutine = StartCoroutine(Grading(false, Player2Arrows));
+                        IngCoroutine2 = StartCoroutine(Grading(false, Player2Arrows));
                         StartCoroutine(GameOverDelay(false));
                         //기절
                     }
@@ -208,7 +209,8 @@ public class TugOfWar : MonoBehaviour
             {
                 spriteRenderers[i].color = new Color(1, 1, 0, 1);
             }
-            IngCoroutine = null;
+            IngCoroutine1 = null;
+            IngCoroutine2 = null;
         }
     }
     public void GoHome()

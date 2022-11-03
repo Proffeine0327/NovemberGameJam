@@ -25,6 +25,5 @@ public class YutNormalCell : YutBasedCell
         player.previousCells.Add(player.currentCell);
         player.currentCell = nextCell;
         player.transform.DOMove(nextCell.transform.position, animationTime).SetEase(Ease.OutQuad);
-
     }
 }
