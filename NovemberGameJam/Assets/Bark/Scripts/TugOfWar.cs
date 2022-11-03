@@ -2,270 +2,220 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using UnityEngine.SceneManagement;
-using DG.Tweening;
-using System.Reflection;
+using TMPro;
 
 public class TugOfWar : MonoBehaviour
 {
-    [SerializeField] GameObject Line, TouchParticle, Tutorial, GameOverParticle, ResultWindow;
-    [SerializeField] SpriteRenderer[] Player1Arrows, Player2Arrows;
-    [SerializeField] Transform LeftPos, RightPos;
-    [SerializeField] List<KeyCode> KeyboardList = new List<KeyCode>();
-    [SerializeField] List<KeyCode> KeyboardList2 = new List<KeyCode>();
-    [SerializeField] List<KeyCode> RandomKeyboardList = new List<KeyCode>();
-    [SerializeField] List<KeyCode> RandomKeyboardList2 = new List<KeyCode>();
-    [SerializeField] Text StartSecond, Result1, Result2;
-    [SerializeField] Text[] Player1Text, Player2Text;
-    private int TouchNum;
-    private bool isGameStart = false, isGameOver1 = false, isGameOver2 = false;
+    public static TugOfWar instance;
 
-    private Coroutine IngCoroutine1;
-    private Coroutine IngCoroutine2;
+    int ropePoint;
+
+    public GameObject rope;
+
+    public GameObject playerOnePrefeb;
+    public GameObject playerTwoPrefeb;
+
+    public SpriteRenderer playerOneStunImage;
+    public SpriteRenderer playerTwoStunImage;
+
+    public Transform[] playerOneTransforms;
+    public Transform[] playerTwoTransforms;
+
+    public List<TOWButtonScript> playerOneButtons = new List<TOWButtonScript>();
+    public List<TOWButtonScript> playerTwoButtons = new List<TOWButtonScript>();
+
+    [Header("UI")]
+    public Image fadePanel;
+    public ExplainScript explain;
+    public TextMeshProUGUI countDown;
+    public TextMeshProUGUI win;
+
+    bool isExplainShowEnd;
+    bool isPlayGame;
+    bool isGameEnd;
+
+    float playerOneStunTime;
+    float playerTwoStunTime;
+
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+    }
+
     private void Start()
     {
-        StartListDraw();
-        StartCoroutine(StartTutorial());
-    }
-    private void Update()
-    {
-        PressKeyPrint();
-        Line.transform.position = new Vector2(0.45f + (TouchNum / 3.8f), -2.59f);
-        GameEnd();
-        InputTouch();
+        countDown.gameObject.SetActive(false);
+        fadePanel.gameObject.SetActive(true);
+        playerOneStunImage.gameObject.SetActive(false);
+        playerTwoStunImage.gameObject.SetActive(false);
+        win.gameObject.SetActive(false);
+        StartCoroutine(fadeIn());
     }
 
-    void InputTouch()
+    IEnumerator fadeIn()
     {
-        if (isGameStart)
-        {
-            for (int i = 0; i < KeyboardList.Count; i++)
-            {
-                if (Input.GetKeyDown(KeyboardList[i]) && !isGameOver1)
-                {
-                    if (KeyboardList[i] == RandomKeyboardList[0])
-                    {
-                        if (IngCoroutine1 != null)
-                        {
-                            StopCoroutine(IngCoroutine1);
-                        }
-                        IngCoroutine1 = StartCoroutine(Grading(true, Player1Arrows));
-                        TouchProduction(LeftPos);
-                        TouchNum--;
-                        RandomKeyboardList.Remove(RandomKeyboardList[0]);
-                        RandomKeyboardList.Add(KeyboardList[Random.Range(0, 4)]);
-                    }
-                    else
-                    {
-                        if (IngCoroutine1 != null)
-                        {
-                            StopCoroutine(IngCoroutine1);
-                        }
-                        IngCoroutine1 = StartCoroutine(Grading(false, Player1Arrows));
-                        StartCoroutine(GameOverDelay(true));
-                        //±âÀý
-                    }
-                }
-            }
-            for (int i = 0; i < KeyboardList2.Count; i++)
-            {
-                if (Input.GetKeyDown(KeyboardList2[i]) && !isGameOver2)
-                {
-                    if (KeyboardList2[i] == RandomKeyboardList2[0])
-                    {
-                        if (IngCoroutine2 != null)
-                        {
-                            StopCoroutine(IngCoroutine2);
-                        }
-                        IngCoroutine2 = StartCoroutine(Grading(true, Player2Arrows));
-                        TouchProduction(RightPos);
-                        TouchNum++;
-                        RandomKeyboardList2.Remove(RandomKeyboardList2[0]);
-                        RandomKeyboardList2.Add(KeyboardList2[Random.Range(0, 4)]);
-                    }
-                    else
-                    {
-                        if (IngCoroutine2 != null)
-                        {
-                            StopCoroutine(IngCoroutine2);
-                        }
-                        IngCoroutine2 = StartCoroutine(Grading(false, Player2Arrows));
-                        StartCoroutine(GameOverDelay(false));
-                        //±âÀý
-                    }
-                }
-            }
-        }
-    }
+        var fadePanelColor = fadePanel.color;
+        fadePanelColor.a = 1;
+        fadePanel.color = fadePanelColor;
 
-    void StartListDraw()
-    {
-        for (int i = 0; i < RandomKeyboardList.Count; i++)
+        for (float i = 1; i > 0.8f; i -= Time.deltaTime / 3)
         {
-            RandomKeyboardList[i] = KeyboardList[Random.Range(0, 4)];
-            RandomKeyboardList2[i] = KeyboardList2[Random.Range(0, 4)];
+            fadePanelColor.a = i;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
         }
-    }
-    void TouchProduction(Transform trans)
-    {
-        GameObject gameObject = Instantiate(TouchParticle, trans);
-        Destroy(gameObject, 0.6f);
-    }
-    void GameEnd()
-    {
-        if (TouchNum >= 15)
+
+        explain.showExplain(new Vector2(0, 1200), new Vector2(0, 0), () =>
         {
-            isGameStart = false;
-            ResultWindow.SetActive(true);
-            ResultWindow.gameObject.transform.DOScale(new Vector3(1, 1, 1), 0.7f);
-            Result1.text = "Player2";
-            Result2.text = "Player1";
-        }
-        else if (TouchNum <= -15)
+            isExplainShowEnd = true;
+        });
+
+        while (!isExplainShowEnd) yield return new WaitForEndOfFrame();
+
+        yield return new WaitForSecondsRealtime(1f);
+
+        for (float t = fadePanelColor.a; t > 0; t -= Time.deltaTime / 2)
         {
-            isGameStart = false;
-            ResultWindow.SetActive(true);
-            ResultWindow.gameObject.transform.DOScale(new Vector3(1, 1, 1), 0.7f);
-            Result1.text = "Player1";
-            Result2.text = "Player2";
+            fadePanelColor.a = t;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
         }
-    }
-    void PressKeyPrint()
-    {
-        for (int i = 0; i < Player1Text.Length; i++)
-        {
-            Player1Text[i].text = RandomKeyboardList[i].ToString();
-            if (RandomKeyboardList2[i].ToString() == "LeftArrow")
-            {
-                Player2Text[i].text = "¡ç";
-            }
-            else if (RandomKeyboardList2[i].ToString() == "UpArrow")
-            {
-                Player2Text[i].text = "¡è";
-            }
-            else if (RandomKeyboardList2[i].ToString() == "DownArrow")
-            {
-                Player2Text[i].text = "¡é";
-            }
-            else if (RandomKeyboardList2[i].ToString() == "RightArrow")
-            {
-                Player2Text[i].text = "¡æ";
-            }
-        }
-    }
-    IEnumerator StartTutorial()
-    {
+
+        yield return new WaitForSeconds(1);
         for (int i = 0; i < 5; i++)
         {
-            StartSecond.text = $"{5 - i}";
-            yield return new WaitForSeconds(1);
-        }
-        Tutorial.SetActive(false);
-        StartSecond.gameObject.SetActive(false);
-        isGameStart = true;
-    }
-    IEnumerator GameOverDelay(bool thisOver)
-    {
-        if (thisOver)
-        {
-            isGameOver1 = true;
-            GameObject gameObject = Instantiate(GameOverParticle, LeftPos);
-            yield return new WaitForSeconds(2);
-            Destroy(gameObject);
-            isGameOver1 = false;
-        }
-        else
-        {
-            isGameOver2 = true;
-            GameObject gameObject = Instantiate(GameOverParticle, RightPos);
-            yield return new WaitForSeconds(2);
-            Destroy(gameObject);
-            isGameOver2 = false;
-        }
-    }
-    IEnumerator Grading(bool grad, SpriteRenderer[] spriteRenderers)
-    {
-        if (grad)
-        {
-            for (int i = 0; i < Player1Arrows.Length; i++)
-            {
-                spriteRenderers[i].color = new Color(0, 1, 0, 1);
-            }
-            yield return new WaitForSeconds(0.6f);
-            for (int i = 0; i < Player1Arrows.Length; i++)
-            {
-                spriteRenderers[i].color = new Color(1, 1, 0, 1);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < Player1Arrows.Length; i++)
-            {
-                spriteRenderers[i].color = new Color(1, 0, 0, 1);
-            }
-            yield return new WaitForSeconds(2);
-            for (int i = 0; i < Player1Arrows.Length; i++)
-            {
-                spriteRenderers[i].color = new Color(1, 1, 0, 1);
-            }
-            IngCoroutine1 = null;
-            IngCoroutine2 = null;
-        }
-    }
-    public void GoHome()
-    {
-        //SceneManager.LoadScene("Title");
-    }
-    public void ReTry()
-    {
-        SceneManager.LoadScene("TugOfWar");
-    }
-}
+            var one = Instantiate(playerOnePrefeb, playerOneTransforms[i].position, Quaternion.identity);
+            playerOneButtons.Add(one.GetComponent<TOWButtonScript>());
+            playerOneButtons[i].currentTransformIndex = i;
 
-[CustomEditor(typeof(TugOfWar))]
-public class TugOfWarEditor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        var _keycodes = serializedObject.FindProperty("KeyboardList");
-        var _keycodes2 = serializedObject.FindProperty("KeyboardList2");
+            var two = Instantiate(playerTwoPrefeb, playerTwoTransforms[i].position, Quaternion.identity);
+            playerTwoButtons.Add(two.GetComponent<TOWButtonScript>());
+            playerTwoButtons[i].currentTransformIndex = i;
+        }
+        countDown.gameObject.SetActive(true);
+        countDown.text = "3";
+        yield return new WaitForSeconds(1);
+        countDown.text = "2";
+        yield return new WaitForSeconds(1);
+        countDown.text = "1";
+        yield return new WaitForSeconds(1);
+        countDown.text = "ì‹œìž‘!";
+        yield return new WaitForSeconds(1);
 
-        EditorGUILayout.BeginVertical(GUI.skin.box);
-        for (int i = 0; i < _keycodes.arraySize; i++)
-        {
-            int index = i;
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel($"KeyCode{index}");
-            if (GUILayout.Button("open"))
+        isPlayGame = true;
+        countDown.gameObject.SetActive(false);
+    }
+
+    IEnumerator EndGame()
+    {
+        win.text = ropePoint >= 0 ? "ì • ëŒ€ê° ìš°ìŠ¹!" : "ê¹€ ëŒ€ê° ìš°ìŠ¹!";
+        yield return new WaitForSeconds(1);
+        for (float t = fadePanel.color.a; t > 0; t -= Time.deltaTime / 2)
             {
-                KeyCodeSearchableWindow.Open((x) =>
+                var fadePanelColor = fadePanel.color;
+                fadePanelColor.a = t;
+                fadePanel.color = fadePanelColor;
+                yield return new WaitForEndOfFrame();
+            }
+        YutGameManager.manager.isPlayMiniGame = false;
+    }
+
+    private void Update()
+    {
+        if (isPlayGame)
+        {
+            rope.transform.position = new Vector3((float)ropePoint / 3.33f, 0,0);
+
+            if(Mathf.Abs(ropePoint) >= 15)
+            {
+                isGameEnd = true;
+                isPlayGame = false;
+                StartCoroutine(EndGame());
+            }
+
+            if (playerOneStunTime > 0)
+            {
+                playerOneStunTime -= Time.deltaTime;
+                playerOneStunImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                playerOneStunImage.gameObject.SetActive(false);
+            }
+
+            int index = -1;
+
+            if (Input.GetKeyDown(KeyCode.W))
+                index = 0;
+            if (Input.GetKeyDown(KeyCode.S))
+                index = 1;
+            if (Input.GetKeyDown(KeyCode.A))
+                index = 2;
+            if (Input.GetKeyDown(KeyCode.D))
+                index = 3;
+
+            if (index != -1 && playerOneStunTime <= 0)
+            {
+                if (playerOneButtons[0].buttonType == index)
                 {
-                    _keycodes.GetArrayElementAtIndex(index).enumValueFlag = (int)x;
-                    serializedObject.ApplyModifiedProperties();
-                });
-            }
-            EditorGUILayout.EndHorizontal();
-        }
+                    var temp = playerOneButtons[0];
+                    playerOneButtons.RemoveAt(0);
+                    Destroy(temp.gameObject);
 
-        EditorGUILayout.Space();
-
-        for (int i = 0; i < _keycodes2.arraySize; i++)
-        {
-            int index = i;
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel($"KeyCode{index}");
-            if (GUILayout.Button("open"))
-            {
-                KeyCodeSearchableWindow.Open((x) =>
+                    foreach (var btn in playerOneButtons) btn.currentTransformIndex--;
+                    var one = Instantiate(playerOnePrefeb, playerOneTransforms[4].position, Quaternion.identity);
+                    playerOneButtons.Add(one.GetComponent<TOWButtonScript>());
+                    playerOneButtons[4].currentTransformIndex = 4;
+                    ropePoint--;
+                }
+                else
                 {
-                    _keycodes2.GetArrayElementAtIndex(index).enumValueFlag = (int)x;
-                    serializedObject.ApplyModifiedProperties();
-                });
+                    playerOneStunTime = 1;
+                }
             }
-            EditorGUILayout.EndHorizontal();
+
+            if (playerTwoStunTime > 0)
+            {
+                playerTwoStunTime -= Time.deltaTime;
+                playerTwoStunImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                playerTwoStunImage.gameObject.SetActive(false);
+            }
+
+            index = -1;
+
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+                index = 0;
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+                index = 1;
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+                index = 2;
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+                index = 3;
+
+            if (index != -1 && playerTwoStunTime <= 0)
+            {
+                if (playerTwoButtons[0].buttonType == index)
+                {
+                    var temp = playerTwoButtons[0];
+                    playerTwoButtons.RemoveAt(0);
+                    Destroy(temp.gameObject);
+
+                    foreach (var btn in playerTwoButtons) btn.currentTransformIndex--;
+                    var one = Instantiate(playerTwoPrefeb, playerTwoTransforms[4].position, Quaternion.identity);
+                    playerTwoButtons.Add(one.GetComponent<TOWButtonScript>());
+                    playerTwoButtons[4].currentTransformIndex = 4;
+                    ropePoint++;
+                }
+                else
+                {
+                    playerTwoStunTime = 1;
+                }
+            }
         }
-        EditorGUILayout.EndVertical();
-        base.OnInspectorGUI();
     }
 }

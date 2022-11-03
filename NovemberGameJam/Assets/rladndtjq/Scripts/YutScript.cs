@@ -22,7 +22,7 @@ public class YutScript : MonoBehaviour
     public void MoveRandomPos(int index, float power, Vector2 center, Vector2 clamp, Vector2 inside, float animationTime)
     {
         var diff = (clamp - inside);
-        var randomPos = center + (inside + (diff * (power < 0.33f ? 0 : power))) * 0.5f;
+        var randomPos = center + (inside + (diff * (power < 0.4f ? 0 : power))) * 0.5f;
         randomPos = new Vector3(Random.Range(center.x - Mathf.Abs(center.x - randomPos.x), randomPos.x), Random.Range(center.y - Mathf.Abs(center.y - randomPos.y), randomPos.y), 0);
 
         if (randomPos.x < center.x - inside.x / 2 || randomPos.y < center.y - inside.y / 2)

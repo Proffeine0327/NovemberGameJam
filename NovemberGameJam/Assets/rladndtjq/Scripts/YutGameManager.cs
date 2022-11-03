@@ -28,10 +28,10 @@ public class YutGameManager : MonoBehaviour
     [Header("UI")]
     public Image powerBarImage;
     public TextMeshProUGUI throwResultText;
-    public Image fadeInPanel;
+    public Image fadePanel;
+    public ExplainScript explain;
 
-
-    float fadeInTime = 2;
+    bool isExplainShowEnd;
     int currentMiniGameTurnCount;
     SpriteRenderer[] playerSRs;
 
@@ -42,7 +42,7 @@ public class YutGameManager : MonoBehaviour
 
         powerBarImage.gameObject.SetActive(false);
         throwResultText.gameObject.SetActive(false);
-        fadeInPanel.gameObject.SetActive(true);
+        fadePanel.gameObject.SetActive(true);
 
         var playersr =
             from player in players
@@ -57,12 +57,30 @@ public class YutGameManager : MonoBehaviour
 
     IEnumerator fadeIn()
     {
-        for (float t = fadeInTime; t > 0; t -= Time.deltaTime)
+        var fadePanelColor = fadePanel.color;
+        fadePanelColor.a = 1;
+        fadePanel.color = fadePanelColor;
+
+        for (float i = 1; i > 0.8f; i -= Time.deltaTime / 3)
         {
-            fadeInTime = t;
-            var color = fadeInPanel.color;
-            color.a = fadeInTime / 2;
-            fadeInPanel.color = color;
+            fadePanelColor.a = i;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
+        }
+
+        explain.showExplain(new Vector2(0, 1200), new Vector2(0, 0), () =>
+        {
+            isExplainShowEnd = true;
+        });
+
+        while (!isExplainShowEnd) yield return new WaitForEndOfFrame();
+
+        yield return new WaitForSecondsRealtime(1f);
+
+        for (float t = fadePanelColor.a; t > 0; t -= Time.deltaTime / 2)
+        {
+            fadePanelColor.a = t;
+            fadePanel.color = fadePanelColor;
             yield return new WaitForEndOfFrame();
         }
 
@@ -208,20 +226,34 @@ public class YutGameManager : MonoBehaviour
         }
         else
         {
-            disable.SetActive(false);
+            isPlayGame = false;
+            for (float i = 0; i < 1; i += Time.deltaTime / 2)
+            {
+                var fadePanelColor = fadePanel.color;
+                fadePanelColor.a = i;
+                fadePanel.color = fadePanelColor;
+                yield return new WaitForEndOfFrame();
+            }
             var randSceneName = miniGameSceneNames[Random.Range(0, miniGameSceneNames.Length - 1)];
+            disable.SetActive(false);
             SceneManager.LoadSceneAsync(randSceneName, LoadSceneMode.Additive);
 
             isPlayMiniGame = true;
             do
             {
-                isPlayGame = false;
                 yield return new WaitForEndOfFrame();
             } while (isPlayMiniGame);
             isPlayMiniGame = false;
 
             SceneManager.UnloadSceneAsync(randSceneName);
             disable.SetActive(true);
+            for (float t = 1; t > 0; t -= Time.deltaTime / 2)
+            {
+                var fadePanelColor = fadePanel.color;
+                fadePanelColor.a = t;
+                fadePanel.color = fadePanelColor;
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         foreach (var yut in yutManager.yuts) yut.Reset();
