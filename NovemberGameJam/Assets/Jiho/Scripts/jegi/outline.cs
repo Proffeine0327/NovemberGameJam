@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using UnityEngine.SceneManagement;
 public class outline : MonoBehaviour
 {
     [SerializeField]
@@ -48,7 +48,7 @@ public class outline : MonoBehaviour
             righttext.text = "WIN";
             righttext.color = Color.green;
             leftimage.color = new Color(0, 0, 0, 0.5f);
-            TouchNum = 1;
+            TouchNum = -1;
             StartCoroutine(EndGame());
         }
         if (collision.name == "rightjegi")
@@ -62,7 +62,7 @@ public class outline : MonoBehaviour
             righttext.text = "LOSE";
             righttext.color = Color.red;
             rightimage.color = new Color(0, 0, 0, 0.5f);
-            TouchNum = -1;
+            TouchNum = 1;
             StartCoroutine(EndGame());
         }
     }
@@ -125,6 +125,15 @@ public class outline : MonoBehaviour
             fadePanel.color = fadePanelColor;
             yield return new WaitForEndOfFrame();
         }
+        YutGameManager.manager.isPlayMiniGame = false;
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("YutPlay"));
+
+        if (TouchNum < 0)
+            YutGameManager.manager.players[0].coinAmount += 10; //김대감 1번쨰 플레이어
+        else
+            YutGameManager.manager.players[1].coinAmount += 10; //정대감 2번째 플레이어
+
         YutGameManager.manager.isPlayMiniGame = false;
     }
 }

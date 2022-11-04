@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
+
 public class tagger : MonoBehaviour
 {
     [SerializeField]
@@ -160,6 +162,7 @@ public class tagger : MonoBehaviour
         isstart = true;//
         countDown.gameObject.SetActive(false);
     }
+    
     IEnumerator EndGame()
     {
         win.gameObject.SetActive(true);
@@ -172,6 +175,15 @@ public class tagger : MonoBehaviour
             fadePanel.color = fadePanelColor;
             yield return new WaitForEndOfFrame();
         }
+        YutGameManager.manager.isPlayMiniGame = false;
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("YutPlay"));
+
+        if (TouchNum < 0)
+            YutGameManager.manager.players[0].coinAmount += 10; //김대감 1번쨰 플레이어
+        else
+            YutGameManager.manager.players[1].coinAmount += 10; //정대감 2번째 플레이어
+
         YutGameManager.manager.isPlayMiniGame = false;
     }
 }
