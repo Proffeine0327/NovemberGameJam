@@ -30,6 +30,9 @@ public class YutGameManager : MonoBehaviour
     public TextMeshProUGUI throwResultText;
     public Image fadePanel;
     public ExplainScript explain;
+    public Image miniGameList;
+    public RectTransform miniGameListArrow;
+    public RectTransform[] arrowPositions;
 
     bool isExplainShowEnd;
     int currentMiniGameTurnCount;
@@ -164,6 +167,18 @@ public class YutGameManager : MonoBehaviour
         if (isBackDo)
         {
             players[currentTurnPlayerIndex].currentCell.MoveBackward(players[currentTurnPlayerIndex], 0.35f);
+            if (players[currentTurnPlayerIndex].currentCell.isCoinCell)
+                players[currentTurnPlayerIndex].coinAmount += 5;
+
+            if (players[currentTurnPlayerIndex].currentCell != startCell)
+                if (players[currentTurnPlayerIndex].currentCell == players[currentTurnPlayerIndex == 0 ? 1 : 0].currentCell)
+                {
+                    if (players[currentTurnPlayerIndex == 0 ? 1 : 0].coinAmount > 5)
+                    {
+                        players[currentTurnPlayerIndex == 0 ? 1 : 0].coinAmount -= 5;
+                        players[currentTurnPlayerIndex].coinAmount += 5;
+                    }
+                }
         }
         else
         {
@@ -176,8 +191,12 @@ public class YutGameManager : MonoBehaviour
                 if (players[currentTurnPlayerIndex].currentCell == lastCell)
                     break;
             }
-            
+
             if (isMove)
+            {
+                if (players[currentTurnPlayerIndex].currentCell.isCoinCell)
+                    players[currentTurnPlayerIndex].coinAmount += 5;
+
                 if (players[currentTurnPlayerIndex].currentCell == players[currentTurnPlayerIndex == 0 ? 1 : 0].currentCell)
                 {
                     if (players[currentTurnPlayerIndex == 0 ? 1 : 0].coinAmount > 5)
@@ -186,6 +205,7 @@ public class YutGameManager : MonoBehaviour
                         players[currentTurnPlayerIndex].coinAmount += 5;
                     }
                 }
+            }
         }
 
         if (players[currentTurnPlayerIndex].currentCell == lastCell)
@@ -238,14 +258,32 @@ public class YutGameManager : MonoBehaviour
         else
         {
             isPlayGame = false;
-            for (float i = 0; i < 1; i += Time.deltaTime / 2)
+            var rand = Random.Range(0, miniGameSceneNames.Length);
+            var randSceneName = miniGameSceneNames[rand];
+
+            miniGameList.gameObject.SetActive(true);
+            miniGameListArrow.gameObject.SetActive(false);
+            var fadeColor = fadePanel.color;
+            fadeColor.a = 0.7f;
+            fadePanel.color = fadeColor;
+
+            miniGameListArrow.gameObject.SetActive(true);
+            for(int i = 0; i < 21 + rand; i++)
+            {
+                miniGameListArrow.anchoredPosition = arrowPositions[i % 4].anchoredPosition;
+
+                yield return new WaitForSeconds(0.1f);
+            }
+            yield return new WaitForSeconds(2f);
+            miniGameList.gameObject.SetActive(false);
+            
+            for (float i = fadeColor.a; i < 1; i += Time.deltaTime / 2)
             {
                 var fadePanelColor = fadePanel.color;
                 fadePanelColor.a = i;
                 fadePanel.color = fadePanelColor;
                 yield return new WaitForEndOfFrame();
             }
-            var randSceneName = miniGameSceneNames[Random.Range(0, miniGameSceneNames.Length - 1)];
             disable.SetActive(false);
             SceneManager.LoadSceneAsync(randSceneName, LoadSceneMode.Additive);
 
