@@ -15,7 +15,7 @@ public class tagger : MonoBehaviour
     TextMesh[] tm;
     [SerializeField]
     GameObject Mugunghwamanager;
-    string dialogue = "¹«±ÃÈ­ ²ÉÀÌ ÇÇ¾ú½À´Ï´Ù!";
+    string dialogue = "ë¬´ê¶í™” ê½ƒì´ í”¼ì—ˆìŠµë‹ˆë‹¤!";
     bool isturn = false;
     bool iscou = false;
     bool istext = false;
@@ -156,7 +156,7 @@ public class tagger : MonoBehaviour
         yield return new WaitForSeconds(1);
         countDown.text = "1";
         yield return new WaitForSeconds(1);
-        countDown.text = "½ÃÀÛ!";
+        countDown.text = "ì‹œì‘!";
         yield return new WaitForSeconds(1);
 
         isstart = true;//
@@ -166,7 +166,7 @@ public class tagger : MonoBehaviour
     IEnumerator EndGame()
     {
         win.gameObject.SetActive(true);
-        win.text = TouchNum >= 0 ? "±è ´ë°¨ ¿ì½Â!" : "Á¤ ´ë°¨ ¿ì½Â!";
+        win.text = TouchNum >= 0 ? "ê¹€ ëŒ€ê° ìš°ìŠ¹!" : "ì • ëŒ€ê° ìš°ìŠ¹!";
         yield return new WaitForSeconds(1);
         for (float t = fadePanel.color.a; t < 1; t += Time.deltaTime / 2)
         {
@@ -179,10 +179,10 @@ public class tagger : MonoBehaviour
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("YutPlay"));
 
-        if (TouchNum < 0)
-            YutGameManager.manager.players[0].coinAmount += 10; //±è´ë°¨ 1¹ø¤Š ÇÃ·¹ÀÌ¾î
+        if (TouchNum > 0)
+            YutGameManager.manager.players[0].coinAmount += 10; //ï¿½ï¿½ë°¨ 1ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
         else
-            YutGameManager.manager.players[1].coinAmount += 10; //Á¤´ë°¨ 2¹øÂ° ÇÃ·¹ÀÌ¾î
+            YutGameManager.manager.players[1].coinAmount += 10; //ï¿½ï¿½ï¿½ë°¨ 2ï¿½ï¿½Â° ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
 
         YutGameManager.manager.isPlayMiniGame = false;
     }

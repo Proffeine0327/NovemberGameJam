@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
 using UnityEditor;
 
 public class CreateObj : MonoBehaviour {
@@ -47,3 +48,4 @@ public class CreateObj : MonoBehaviour {
 	
 
 }
+#endif

@@ -34,6 +34,7 @@ public class YutGameManager : MonoBehaviour
     public RectTransform miniGameListArrow;
     public RectTransform[] arrowPositions;
     public TextMeshProUGUI finalEndWinner;
+    public GameObject pressanykey;
 
     bool isExplainShowEnd;
     int currentMiniGameTurnCount;
@@ -224,7 +225,16 @@ public class YutGameManager : MonoBehaviour
             else
             {
                 isEnd = true;
-                finalEndWinner.text = players[currentTurnPlayerIndex].playerType == 0 ? "김 대감 승리!" : "정 대감 승리!";
+                finalEndWinner.gameObject.SetActive(true);
+                pressanykey.SetActive(true);
+                fadePanel.gameObject.SetActive(true);
+
+                var color = fadePanel.color;
+                color.a = 1;
+                fadePanel.color = color;
+                
+                players[currentTurnPlayerIndex].coinAmount += 25;
+                finalEndWinner.text = players[0].coinAmount > players[1].coinAmount? "김 대감 승리!" : "정 대감 승리!";
                 while(true)
                 {
                     if(Input.anyKeyDown)
