@@ -6,12 +6,21 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Bark/Scenes/TugOfWar.unity
-    guid: ca718f308cfd8094987531d0d3bb617a
-  - enabled: 1
     path: Assets/Bark/Scenes/TItle.unity
     guid: 743933cac647594498688f973bbe9980
   - enabled: 1
     path: Assets/rladndtjq/Scenes/YutPlay.unity
     guid: c6ddc8779945c854598fa5309c940ef3
+  - enabled: 1
+    path: Assets/Bark/Scenes/TugOfWar.unity
+    guid: ca718f308cfd8094987531d0d3bb617a
+  - enabled: 1
+    path: Assets/Bark/Scenes/BullFight.unity
+    guid: f73fb8e0123a0594db1584ca2fb5ee0c
+  - enabled: 1
+    path: Assets/Jiho/Scenes/jegi_kick.unity
+    guid: c7d3c3eb7d241834d939045dba2dfc72
+  - enabled: 1
+    path: Assets/Jiho/Scenes/Mugunghwa.unity
+    guid: f242610d9a454f34c8652ff0a64ff51b
   m_configObjects: {}

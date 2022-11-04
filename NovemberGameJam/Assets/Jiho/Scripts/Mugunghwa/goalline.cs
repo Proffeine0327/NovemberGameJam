@@ -32,6 +32,7 @@ public class goalline : MonoBehaviour
                 tm[1].color = Color.red;
                 tm[1].text = "Lose!";
                 Mugunghwamanager.GetComponent<player>().enabled = false;
+                Tagger.GetComponent<tagger>().TouchNum = 1;
                 Tagger.GetComponent<tagger>().gameend();
             }
             if (collision.name == "rightplayer")
@@ -42,6 +43,7 @@ public class goalline : MonoBehaviour
                 tm[1].color = Color.green;
                 tm[1].text = "Win!";
                 Mugunghwamanager.GetComponent<player>().enabled = false;
+                Tagger.GetComponent<tagger>().TouchNum = -1;
                 Tagger.GetComponent<tagger>().gameend();
             }
         }

@@ -5,13 +5,10 @@ using UnityEngine.UI;
 
 public class jegimanager : MonoBehaviour
 {
-    [SerializeField]
-    Image countimage;
-    [SerializeField]
-    Text count;
     float time = 3.5f;
     [SerializeField]
     GameObject[] jegiobj;
+    public GameObject Outline;
     void Start()
     {
         
@@ -19,11 +16,8 @@ public class jegimanager : MonoBehaviour
 
     void Update()
     {
-        time -= Time.deltaTime;
-        count.GetComponent<Text>().text = ((int)time).ToString();
-        if(time <= 1)
+        if (Outline.GetComponent<outline>().isPlayGame)
         {
-            countimage.gameObject.SetActive(false);
             jegiobj[0].GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             jegiobj[1].GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         }   
