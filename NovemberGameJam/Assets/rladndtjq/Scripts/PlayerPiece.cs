@@ -11,5 +11,6 @@ public class PlayerPiece : MonoBehaviour
     public int playerType; //0 == playerOne, 1 == playerTwo;
     public int moveCount;
     public int cycleCount;
+    public int coinAmount;
     public bool isContinuity;
 }

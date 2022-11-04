@@ -167,6 +167,7 @@ public class YutGameManager : MonoBehaviour
         }
         else
         {
+            bool isMove = players[currentTurnPlayerIndex].moveCount > 0 ? true : false;
             while (players[currentTurnPlayerIndex].moveCount > 0)
             {
                 players[currentTurnPlayerIndex].moveCount--;
@@ -175,6 +176,16 @@ public class YutGameManager : MonoBehaviour
                 if (players[currentTurnPlayerIndex].currentCell == lastCell)
                     break;
             }
+            
+            if (isMove)
+                if (players[currentTurnPlayerIndex].currentCell == players[currentTurnPlayerIndex == 0 ? 1 : 0].currentCell)
+                {
+                    if (players[currentTurnPlayerIndex == 0 ? 1 : 0].coinAmount > 5)
+                    {
+                        players[currentTurnPlayerIndex == 0 ? 1 : 0].coinAmount -= 5;
+                        players[currentTurnPlayerIndex].coinAmount += 5;
+                    }
+                }
         }
 
         if (players[currentTurnPlayerIndex].currentCell == lastCell)
@@ -243,7 +254,6 @@ public class YutGameManager : MonoBehaviour
             {
                 yield return new WaitForEndOfFrame();
             } while (isPlayMiniGame);
-            isPlayMiniGame = false;
 
             SceneManager.UnloadSceneAsync(randSceneName);
             disable.SetActive(true);
@@ -254,6 +264,8 @@ public class YutGameManager : MonoBehaviour
                 fadePanel.color = fadePanelColor;
                 yield return new WaitForEndOfFrame();
             }
+            isPlayGame = true;
+            currentMiniGameTurnCount = 0;
         }
 
         foreach (var yut in yutManager.yuts) yut.Reset();
