@@ -33,6 +33,7 @@ public class YutGameManager : MonoBehaviour
     public Image miniGameList;
     public RectTransform miniGameListArrow;
     public RectTransform[] arrowPositions;
+    public TextMeshProUGUI finalEndWinner;
 
     bool isExplainShowEnd;
     int currentMiniGameTurnCount;
@@ -223,6 +224,14 @@ public class YutGameManager : MonoBehaviour
             else
             {
                 isEnd = true;
+                finalEndWinner.text = players[currentTurnPlayerIndex].playerType == 0 ? "김 대감 승리!" : "정 대감 승리!";
+                while(true)
+                {
+                    if(Input.anyKeyDown)
+                        break;
+                    yield return new WaitForEndOfFrame();
+                }
+                SceneManager.LoadScene("Title");
             }
         }
 
