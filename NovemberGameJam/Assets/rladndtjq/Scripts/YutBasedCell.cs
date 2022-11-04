@@ -8,6 +8,8 @@ public abstract class YutBasedCell : MonoBehaviour
     public bool playerOneArrived;
     public bool playerTwoArrived;
 
+    public bool isCoinCell;
+
     public abstract void MoveToward(PlayerPiece player, float animationTime);
     public void MoveBackward(PlayerPiece player, float animationTime)
     {
