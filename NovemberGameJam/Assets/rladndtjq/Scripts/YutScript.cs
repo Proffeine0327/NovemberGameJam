@@ -22,13 +22,21 @@ public class YutScript : MonoBehaviour
     public void MoveRandomPos(int index, float power, Vector2 center, Vector2 clamp, Vector2 inside, float animationTime)
     {
         var diff = (clamp - inside);
-        var randomPos = center + (inside + (diff * (power < 0.4f ? 0 : power))) * 0.5f;
+        var randomPos = center + (inside + (diff * (power < 0.5f ? 0 : power))) * 0.5f;
         randomPos = new Vector3(Random.Range(center.x - Mathf.Abs(center.x - randomPos.x), randomPos.x), Random.Range(center.y - Mathf.Abs(center.y - randomPos.y), randomPos.y), 0);
 
+        Vector2 movePos = randomPos;
+
         if (randomPos.x < center.x - inside.x / 2 || randomPos.y < center.y - inside.y / 2)
+        {
             isOut = true;
+            movePos = movePos - Vector2.one;
+        }
         if (randomPos.x > center.x + inside.x / 2 || randomPos.y > center.y + inside.y / 2)
+        {
             isOut = true;
+            movePos = movePos + Vector2.one;
+        }
 
         if (index == 0)
             isFront = Random.Range(0, 99.99f) < 75 - 15 * power ? true : false;
@@ -37,7 +45,7 @@ public class YutScript : MonoBehaviour
             
         var randomRotation = new Vector3(0, (isFront ? 180 : 0), Random.Range(0, 360));
 
-        transform.DOMove(randomPos, animationTime).SetEase(Ease.OutQuad);
+        transform.DOMove(movePos, animationTime).SetEase(Ease.OutQuad);
         transform.DOScale(afterThrowScale, animationTime).SetEase(Ease.InOutBounce);
         transform.DORotate(randomRotation, animationTime);
     }

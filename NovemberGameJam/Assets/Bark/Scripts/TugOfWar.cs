@@ -46,6 +46,7 @@ public class TugOfWar : MonoBehaviour
 
     private void Start()
     {
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("TugOfWar"));
         countDown.gameObject.SetActive(false);
         fadePanel.gameObject.SetActive(true);
         playerOneStunImage.gameObject.SetActive(false);
@@ -110,15 +111,30 @@ public class TugOfWar : MonoBehaviour
 
     IEnumerator EndGame()
     {
+        win.gameObject.SetActive(true);
         win.text = ropePoint >= 0 ? "정 대감 우승!" : "김 대감 우승!";
+        for (int i = 0; i < 5; i++)
+        {
+            Destroy(playerOneButtons[i]);
+            Destroy(playerTwoButtons[i]);
+        }
+        playerTwoButtons.Clear();
+        playerOneButtons.Clear();
         yield return new WaitForSeconds(1);
-        for (float t = fadePanel.color.a; t > 0; t -= Time.deltaTime / 2)
-            {
-                var fadePanelColor = fadePanel.color;
-                fadePanelColor.a = t;
-                fadePanel.color = fadePanelColor;
-                yield return new WaitForEndOfFrame();
-            }
+        for (float t = 0; t < 1; t += Time.deltaTime / 2)
+        {
+            var fadePanelColor = fadePanel.color;
+            fadePanelColor.a = t;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
+        }
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("YutPlay"));
+        
+        if(ropePoint < 0)
+            YutGameManager.manager.players[0].coinAmount += 10;
+        else
+            YutGameManager.manager.players[1].coinAmount += 10;
+
         YutGameManager.manager.isPlayMiniGame = false;
     }
 
@@ -126,9 +142,9 @@ public class TugOfWar : MonoBehaviour
     {
         if (isPlayGame)
         {
-            rope.transform.position = new Vector3((float)ropePoint / 3.33f, 0,0);
+            rope.transform.position = new Vector3((float)ropePoint / 3.33f, 0, 0);
 
-            if(Mathf.Abs(ropePoint) >= 15)
+            if (Mathf.Abs(ropePoint) >= 15)
             {
                 isGameEnd = true;
                 isPlayGame = false;
