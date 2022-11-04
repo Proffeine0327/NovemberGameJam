@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class tagger : MonoBehaviour
 {
     [SerializeField]
@@ -13,11 +13,6 @@ public class tagger : MonoBehaviour
     TextMesh[] tm;
     [SerializeField]
     GameObject Mugunghwamanager;
-    [SerializeField]
-    GameObject image;
-    [SerializeField]
-    Text timer;
-    float time = 4f;
     string dialogue = "무궁화 꽃이 피었습니다!";
     bool isturn = false;
     bool iscou = false;
@@ -25,17 +20,24 @@ public class tagger : MonoBehaviour
     bool isstart = false;
     public bool isnotend = true;
     public bool move = false;
+
+    [Header("UI")]
+    public Image fadePanel;
+    public ExplainScript explain;
+    public TextMeshProUGUI countDown;
+    public TextMeshProUGUI win;
+    bool isExplainShowEnd;
+    public int TouchNum;
     void Start()
     {
-        StartCoroutine(mugunghwastart());
+        StartCoroutine(fadeIn());
     }
 
     void Update()
     {
-        if(isstart)
+        if (isstart)
         {
-            time -= Time.deltaTime;
-            timer.text = ((int)time).ToString();
+            StartCoroutine(mugunghwastart());
         }
         if (istext == true && isnotend)
         {
@@ -52,6 +54,7 @@ public class tagger : MonoBehaviour
                 tm[1].color = Color.green;
                 tm[1].text = "Win!";
                 Mugunghwamanager.GetComponent<player>().enabled = false;
+                TouchNum = -1;
                 gameend();
             }
             if (Input.GetKey(KeyCode.L) && isnotend)
@@ -62,6 +65,7 @@ public class tagger : MonoBehaviour
                 tm[1].color = Color.red;
                 tm[1].text = "Lose!";
                 Mugunghwamanager.GetComponent<player>().enabled = false;
+                TouchNum = 1;
                 gameend();
             }
         }
@@ -99,16 +103,75 @@ public class tagger : MonoBehaviour
 
     IEnumerator mugunghwastart()
     {
-        isstart = true;
+        isstart = false;
         yield return new WaitForSeconds(3f);
         move = true;
         isstart = false;
-        image.SetActive(false);
         istext = true;
     }
     public void gameend()
     {
-        Debug.Log("무궁화 끝!");
-        //게임 종료시 호출되는 함수
+        StartCoroutine(EndGame());
+    }
+
+    IEnumerator fadeIn()
+    {
+        countDown.gameObject.SetActive(false);
+        fadePanel.gameObject.SetActive(true);
+        win.gameObject.SetActive(false);
+        var fadePanelColor = fadePanel.color;
+        fadePanelColor.a = 1;
+        fadePanel.color = fadePanelColor;
+
+        for (float i = 1; i > 0.8f; i -= Time.deltaTime / 3)
+        {
+            fadePanelColor.a = i;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
+        }
+
+        explain.showExplain(new Vector2(0, 1200), new Vector2(0, 0), () =>
+        {
+            isExplainShowEnd = true;
+        });
+
+        while (!isExplainShowEnd) yield return new WaitForEndOfFrame();
+
+        yield return new WaitForSecondsRealtime(1f);
+
+        for (float t = fadePanelColor.a; t > 0; t -= Time.deltaTime / 2)
+        {
+            fadePanelColor.a = t;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return new WaitForSeconds(1);
+        countDown.gameObject.SetActive(true);
+        countDown.text = "3";
+        yield return new WaitForSeconds(1);
+        countDown.text = "2";
+        yield return new WaitForSeconds(1);
+        countDown.text = "1";
+        yield return new WaitForSeconds(1);
+        countDown.text = "시작!";
+        yield return new WaitForSeconds(1);
+
+        isstart = true;//
+        countDown.gameObject.SetActive(false);
+    }
+    IEnumerator EndGame()
+    {
+        win.gameObject.SetActive(true);
+        win.text = TouchNum >= 0 ? "김 대감 우승!" : "정 대감 우승!";
+        yield return new WaitForSeconds(1);
+        for (float t = fadePanel.color.a; t < 1; t += Time.deltaTime / 2)
+        {
+            var fadePanelColor = fadePanel.color;
+            fadePanelColor.a = t;
+            fadePanel.color = fadePanelColor;
+            yield return new WaitForEndOfFrame();
+        }
+        YutGameManager.manager.isPlayMiniGame = false;
     }
 }
