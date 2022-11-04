@@ -129,7 +129,7 @@ public class outline : MonoBehaviour
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("YutPlay"));
 
-        if (TouchNum < 0)
+        if (TouchNum > 0)
             YutGameManager.manager.players[0].coinAmount += 10; //김대감 1번쨰 플레이어
         else
             YutGameManager.manager.players[1].coinAmount += 10; //정대감 2번째 플레이어
