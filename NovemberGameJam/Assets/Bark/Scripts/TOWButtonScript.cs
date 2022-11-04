@@ -12,7 +12,7 @@ public class TOWButtonScript : MonoBehaviour
 
     private void Awake()
     {
-        buttonType = Random.Range(0, 3);
+        buttonType = Random.Range(0, 4);
         gameObject.GetComponent<SpriteRenderer>().sprite = sprites[buttonType];
     }
 

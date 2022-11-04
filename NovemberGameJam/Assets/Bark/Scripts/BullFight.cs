@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BullFight : MonoBehaviour
@@ -92,6 +93,13 @@ public class BullFight : MonoBehaviour
             fadePanel.color = fadePanelColor;
             yield return new WaitForEndOfFrame();
         }
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("YutPlay"));
+
+        if (TouchNum > 0)
+            YutGameManager.manager.players[0].coinAmount += 10; //김대감 1번쨰 플레이어
+        else
+            YutGameManager.manager.players[1].coinAmount += 10; //정대감 2번째 플레이어
+
         YutGameManager.manager.isPlayMiniGame = false;
     }
     void InputTouch()
