@@ -2849,6 +2849,9 @@ MonoBehaviour:
   disable: {fileID: 12998782}
   miniGameSceneNames:
   - Bark/Scenes/TugOfWar
+  - Bark/Scenes/BullFight
+  - Jiho/Scenes/jegi_kick
+  - Jiho/Scenes/Mugunghwa
   powerBarImage: {fileID: 1366262071}
   throwResultText: {fileID: 1405217633}
   fadePanel: {fileID: 32614248}
